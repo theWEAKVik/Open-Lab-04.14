@@ -14,9 +14,10 @@ namespace Open_Lab_04._14
         private StringWriter writer;
         private TextWriter consoleWriter;
 
-        private const int RandSeed = 34242252;
         private const int MaxWordSize = 100;
         private const int MaxWordCount = 100;
+        private const int RandSeed = 34242252;
+        private const int RandTestCasesCount = 98;
 
         [OneTimeSetUp]
         public void Init()
@@ -27,16 +28,10 @@ namespace Open_Lab_04._14
         }
 
         [OneTimeTearDown]
-        public void Cleanup()
-        {
-            writer.Close();
-        }
+        public void Cleanup() => writer.Close();
 
         [SetUp]
-        public void Setup()
-        {
-            Console.SetOut(writer);
-        }
+        public void Setup() => Console.SetOut(writer);
 
         [TearDown]
         public void TearDown()
@@ -46,21 +41,44 @@ namespace Open_Lab_04._14
         }
 
         [TestCaseSource(nameof(GetPredefined))]
-        public void TestWithPredefined(string[] input, string expectedOutput)
-        {
-            printer.Print(input);
-            writer.Flush();
-
-            Assert.That(expectedOutput.Equals(writer.ToString()));
-        }
+        public void TestWithPredefined(string[] input, string expectedOutput) => Test(input, expectedOutput);
 
         [TestCaseSource(nameof(GetRandom))]
-        public void TestWithRandom(string[] input, string expectedOutput)
+        public void TestWithRandom(string[] input, string expectedOutput) => Test(input, expectedOutput);
+
+        public void Test(string[] input, string expectedOutput)
         {
             printer.Print(input);
             writer.Flush();
 
-            Assert.That(expectedOutput.Equals(writer.ToString()));
+            var output = writer.ToString();
+
+            //TODO: better explanation, when assertion fails
+            var splitOutLineBreak = output.Split('\n');
+            Assert.That(splitOutLineBreak[^1].Length == 0, "Please make sure, that last line has been written with Console.WriteLine(); on the end!");
+
+            foreach (var entry in splitOutLineBreak)
+                if (entry.Length != 0 && entry[^1] != '\r')
+                    Assert.Fail("Please use Console.WriteLine(); to move into next line!");
+
+            var splitOut = output.Split("\r\n");
+            var splitExp = expectedOutput.Split("\r\n");
+
+            Assert.That(splitExp.Length == splitOut.Length,
+                $"Expected {splitExp.Length} lines in console, received {splitOut.Length}!");
+
+            for (var i = 0; i < splitExp.Length; i++)
+            {
+                var exp = splitExp[i];
+                var real = splitOut[i];
+
+                Assert.That(exp.Length == real.Length, 
+                    $"Expected {exp.Length} characters at line {i + 1}, received {real.Length}!");
+
+                for (var j = 0; j < exp.Length; j++)
+                    Assert.That(exp[j] == real[j],
+                        $"Expected '{exp[j]}' at pos {j + 1}, line {i + 1}, received {real[j]}!");
+            }
         }
 
         private static IEnumerable GetPredefined()
@@ -75,7 +93,7 @@ namespace Open_Lab_04._14
         private static IEnumerable GetRandom()
         {
             var random = new Random(RandSeed);
-            for (var z = 0; z < 98; z++)
+            for (var z = 0; z < RandTestCasesCount; z++)
             {
                 var input = new string[random.Next(MaxWordCount) + 1];
                 for (var i = 0; i < input.Length; i++)

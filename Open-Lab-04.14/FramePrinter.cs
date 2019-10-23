@@ -2,9 +2,9 @@
 
 namespace Open_Lab_04._14
 {
-    class Exercise
+    public class FramePrinter
     {
-        public void PrintInFrame(string[] strings)
+        public void Print(string[] strings)
         {
             throw new NotImplementedException();
         }

@@ -10,7 +10,7 @@ namespace Open_Lab_04._14
     class Tests
     {
 
-        private Exercise exercise;
+        private FramePrinter printer;
         private StringWriter writer;
         private TextWriter consoleWriter;
 
@@ -21,7 +21,7 @@ namespace Open_Lab_04._14
         [OneTimeSetUp]
         public void Init()
         {
-            exercise = new Exercise();
+            printer = new FramePrinter();
             writer = new StringWriter();
             consoleWriter = Console.Out;
         }
@@ -48,7 +48,7 @@ namespace Open_Lab_04._14
         [TestCaseSource(nameof(GetPredefined))]
         public void TestWithPredefined(string[] input, string expectedOutput)
         {
-            exercise.PrintInFrame(input);
+            printer.Print(input);
             writer.Flush();
 
             Assert.That(expectedOutput.Equals(writer.ToString()));
@@ -57,7 +57,7 @@ namespace Open_Lab_04._14
         [TestCaseSource(nameof(GetRandom))]
         public void TestWithRandom(string[] input, string expectedOutput)
         {
-            exercise.PrintInFrame(input);
+            printer.Print(input);
             writer.Flush();
 
             Assert.That(expectedOutput.Equals(writer.ToString()));
@@ -83,7 +83,7 @@ namespace Open_Lab_04._14
                     var chars = new char[random.Next(MaxWordSize) + 1];
 
                     for (var j = 0; j < chars.Length; j++)
-                        chars[j] = (char) random.Next(65, 91); //A - Z
+                        chars[j] = (char)random.Next(65, 91); //A - Z
 
                     input[i] = new string(chars);
                 }
@@ -121,6 +121,5 @@ namespace Open_Lab_04._14
             writer.Close();
             return solution;
         }
-
     }
 }

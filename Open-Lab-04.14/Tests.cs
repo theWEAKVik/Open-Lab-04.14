@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 
 namespace Open_Lab_04._14
 {
@@ -10,6 +11,7 @@ namespace Open_Lab_04._14
     class Tests
     {
 
+        private bool shouldStop;
         private FramePrinter printer;
         private StringWriter writer;
         private TextWriter consoleWriter;
@@ -22,6 +24,7 @@ namespace Open_Lab_04._14
         [OneTimeSetUp]
         public void Init()
         {
+            shouldStop = false;
             printer = new FramePrinter();
             writer = new StringWriter();
             consoleWriter = Console.Out;
@@ -38,6 +41,10 @@ namespace Open_Lab_04._14
         {
             Console.SetOut(consoleWriter);
             writer.GetStringBuilder().Clear();
+
+            if (TestContext.CurrentContext.Result.Outcome == ResultState.Failure ||
+                TestContext.CurrentContext.Result.Outcome == ResultState.Error)
+                shouldStop = true;
         }
 
         [TestCaseSource(nameof(GetPredefined))]
@@ -48,6 +55,9 @@ namespace Open_Lab_04._14
 
         public void Test(string[] input, string expectedOutput)
         {
+            if (shouldStop)
+                Assert.Ignore("Previous test failed!");
+
             printer.Print(input);
             writer.Flush();
 

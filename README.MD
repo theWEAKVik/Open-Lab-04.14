@@ -1,7 +1,7 @@
 # Open-Lab-04.14
 (17 XP) A function that prints strings into a console in a frame.
 
-1. Clone this repository to your GitHub account.
+1. Fork this repository to your GitHub account.
 2. Open solution file in Visual Studio.
 3. Open file `FramePrinter.cs`.
 4. Implement the method `Print(string[] strings)` that prints strings into a console each to separate line in a frame.
